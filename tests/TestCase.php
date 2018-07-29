@@ -1,6 +1,6 @@
 <?php
 
-namespace Nevoss\Enumeration\Tests;
+namespace Nevoss\Enumeration\Test;
 
 use Nevoss\Enumeration\EnumerationServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
