@@ -1,0 +1,39 @@
+{
+    "name": "nevoss/laravel-enumeration",
+    "description": "laravel package for using enums in eloquent models",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nevo Golan",
+            "email": "nevos12@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">= 7.1.3",
+        "illuminate/support": "^5.6",
+        "illuminate/console": "^5.6"
+    },
+    "require-dev": {
+        "orchestra/testbench": "~3.0",
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nevoss\\Enumeration\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nevoss\\Enumeration\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nevoss\\Enumeration\\EnumerationServiceProvider"
+            ]
+        }
+    }
+}

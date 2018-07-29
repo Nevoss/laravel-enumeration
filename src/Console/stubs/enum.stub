@@ -1,0 +1,21 @@
+<?php
+
+namespace DummyNamespace;
+
+use Nevoss\Enumeration\Enum;
+
+class DummyClass extends Enum
+{
+    public const SOME_OPTION = 1;
+    public const ANOTHER_OPTION = 2;
+
+    /**
+     * hold all values as keys and the labels as values
+     *
+     * @var array
+     */
+    public static $optionsLabels = [
+        self::SOME_OPTION => 'Some option',
+        self::ANOTHER_OPTION => 'Another option',
+    ];
+}
