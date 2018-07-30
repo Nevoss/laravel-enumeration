@@ -99,5 +99,6 @@ class EnumTest extends TestCase
         $enums->each(function ($enum) {
             $this->assertInstanceOf(PostStatusEnumStub::class, $enum);
         });
+        $this->assertEquals(3, $enums->count());
     }
 }
