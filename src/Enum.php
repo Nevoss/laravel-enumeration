@@ -4,7 +4,7 @@ namespace Nevoss\Enumeration;
 
 use Illuminate\Support\Collection;
 use Nevoss\Enumeration\Contracts\EnumInterface;
-use Nevoss\Enumeration\Exceptions\EnumerationException;
+use Nevoss\Enumeration\Exceptions\InvalidPropertyException;
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
 
 abstract class Enum implements EnumInterface, \JsonSerializable
@@ -43,8 +43,7 @@ abstract class Enum implements EnumInterface, \JsonSerializable
     public function setValue($value = null)
     {
         if ($value !== null && !static::isValid($value)) {
-            $className = \get_class($this);
-            throw new InvalidValueException("\"{$value}\" is invalid value for enum class: \"{$className}\".");
+            throw InvalidValueException::create($value, static::class);
         }
     
         $this->value = $value;
@@ -81,14 +80,14 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      *
      * @param $key
      * @return mixed
-     * @throws EnumerationException
+     * @throws InvalidPropertyException
      */
     public function __get($key)
     {
         $methodName = 'get' . ucfirst($key);
         
         if (!method_exists($this, $methodName)) {
-            throw new EnumerationException("The property \"{$key}\" is not valid.");
+            throw InvalidPropertyException::get($key, static::class);
         }
         
         return $this->{$methodName}();
@@ -100,14 +99,14 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      * @param $key
      * @param $value
      * @return mixed
-     * @throws EnumerationException
+     * @throws InvalidPropertyException
      */
     public function __set($key, $value)
     {
         $methodName = 'set' . ucfirst($key);
     
         if (!method_exists($this, $methodName)) {
-            throw new EnumerationException("The property \"{$key}\" is not valid OR you cannot set value to this property.");
+            throw InvalidPropertyException::set($key, static::class);
         }
     
         return $this->{$methodName}($value);

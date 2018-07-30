@@ -2,7 +2,6 @@
 
 namespace Nevoss\Enumeration\Test;
 
-use Nevoss\Enumeration\Exceptions\EnumerationException;
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
 use Nevoss\Enumeration\Test\Stubs\PostStatusEnumStub;
 use Nevoss\Enumeration\Test\Stubs\PostStub;
@@ -57,7 +56,7 @@ class HasEnumsTest extends TestCase
     }
     
     /** @test */
-    public function it_throw_exception_if_tring_to_set_invalid_value()
+    public function it_throw_exception_if_trying_to_set_invalid_value()
     {
         $this->expectException(InvalidValueException::class);
         

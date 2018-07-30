@@ -3,7 +3,8 @@
 namespace Nevoss\Enumeration\Traits;
 
 use Nevoss\Enumeration\Contracts\EnumInterface;
-use Nevoss\Enumeration\Exceptions\EnumerationException;
+use Nevoss\Enumeration\Exceptions\InvalidEnumPropertyException;
+use Nevoss\Enumeration\Exceptions\MustImplementsEnumInterfaceException;
 
 trait HasEnums
 {
@@ -55,16 +56,16 @@ trait HasEnums
      *
      * @param $key
      * @return bool
-     * @throws EnumerationException
+     * @throws InvalidEnumPropertyException
      */
     protected function isEnumAttributeKey($key)
     {
         if (!property_exists($this, 'enums')) {
-            throw new EnumerationException('Property "enums" must be declare in the model with HasEnums trait');
+            throw InvalidEnumPropertyException::notExists(static::class);
         }
         
         if (!\is_array($this->enums)) {
-            throw  new EnumerationException('Property "enums" must be an array');
+            throw InvalidEnumPropertyException::notAnArray(static::class);
         }
         
         return array_key_exists($key, $this->enums);
@@ -74,14 +75,14 @@ trait HasEnums
      * validate that the class name implements EnumInterface
      *
      * @param $className
-     * @throws EnumerationException
+     * @throws MustImplementsEnumInterfaceException
      */
     protected function validateEnumClass($className)
     {
         $class = new \ReflectionClass($className);
         
         if (!$class->implementsInterface($interfaceClassName = EnumInterface::class)) {
-            throw new EnumerationException("{$className} must implements {$interfaceClassName}");
+            throw MustImplementsEnumInterfaceException::create(static::class);
         }
     }
 }

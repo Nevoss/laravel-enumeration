@@ -3,7 +3,6 @@
 namespace Nevoss\Enumeration\Test;
 
 use Illuminate\Support\Collection;
-use Nevoss\Enumeration\Exceptions\EnumerationException;
 use Nevoss\Enumeration\Exceptions\InvalidPropertyException;
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
 use Nevoss\Enumeration\Test\Stubs\PostStatusEnumStub;
@@ -53,7 +52,7 @@ class EnumTest extends TestCase
     /** @test */
     public function it_throws_exception_if_trying_access_invalid_property()
     {
-        $this->expectException(EnumerationException::class);
+        $this->expectException(InvalidPropertyException::class);
     
         $enum = new PostStatusEnumStub(PostStatusEnumStub::PUBLISH);
         

@@ -4,7 +4,7 @@ namespace Nevoss\Enumeration\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Nevoss\Enumeration\Contracts\EnumInterface;
-use Nevoss\Enumeration\Exceptions\EnumerationException;
+use Nevoss\Enumeration\Exceptions\MustImplementsEnumInterfaceException;
 
 class ValidEnumValue implements Rule
 {
@@ -54,13 +54,13 @@ class ValidEnumValue implements Rule
      *
      * @param $enumClassName
      * @return $this
-     * @throws EnumerationException
+     * @throws MustImplementsEnumInterfaceException
      */
     protected function setEnumClassName($enumClassName)
     {
         $class = new \ReflectionClass($enumClassName);
         if (!$class->implementsInterface(EnumInterface::class)) {
-            throw new EnumerationException("\"{$enumClassName}\" must implements EnumInterface");
+            throw MustImplementsEnumInterfaceException::create($enumClassName);
         }
     
         $this->enumClassName = $enumClassName;
