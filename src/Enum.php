@@ -4,7 +4,7 @@ namespace Nevoss\Enumeration;
 
 use Illuminate\Support\Collection;
 use Nevoss\Enumeration\Contracts\EnumInterface;
-use Nevoss\Enumeration\Exceptions\InvalidPropertyException;
+use Nevoss\Enumeration\Exceptions\EnumerationException;
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
 
 abstract class Enum implements EnumInterface, \JsonSerializable
@@ -81,14 +81,14 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      *
      * @param $key
      * @return mixed
-     * @throws InvalidPropertyException
+     * @throws EnumerationException
      */
     public function __get($key)
     {
         $methodName = 'get' . ucfirst($key);
         
         if (!method_exists($this, $methodName)) {
-            throw new InvalidPropertyException("The property \"{$key}\" is not valid.");
+            throw new EnumerationException("The property \"{$key}\" is not valid.");
         }
         
         return $this->{$methodName}();
@@ -100,14 +100,14 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      * @param $key
      * @param $value
      * @return mixed
-     * @throws InvalidPropertyException
+     * @throws EnumerationException
      */
     public function __set($key, $value)
     {
         $methodName = 'set' . ucfirst($key);
     
         if (!method_exists($this, $methodName)) {
-            throw new InvalidPropertyException("The property \"{$key}\" is not valid OR you cannot set value to this property.");
+            throw new EnumerationException("The property \"{$key}\" is not valid OR you cannot set value to this property.");
         }
     
         return $this->{$methodName}($value);
