@@ -3,8 +3,10 @@
 namespace Nevoss\Enumeration\Test;
 
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
+use Nevoss\Enumeration\Exceptions\MustImplementsEnumInterfaceException;
 use Nevoss\Enumeration\Test\Stubs\PostStatusEnumStub;
 use Nevoss\Enumeration\Test\Stubs\PostStub;
+use Nevoss\Enumeration\Traits\HasEnums;
 
 class HasEnumsTest extends TestCase
 {
@@ -62,4 +64,33 @@ class HasEnumsTest extends TestCase
         
         $this->postStub->setAttribute('status', 'asdasdasdads');
     }
+    
+    /** @test */
+    public function it_throw_exception_if_provided_class_is_not_enum_class_when_trying_to_get_attribute()
+    {
+        $this->expectException(MustImplementsEnumInterfaceException::class);
+    
+        $refProp = new \ReflectionProperty(\get_class($this->postStub), 'enums');
+        $refProp->setAccessible(true);
+        $refProp->setValue($this->postStub, [
+            'status' => \stdClass::class
+        ]);
+    
+        $this->postStub->getAttribute('status');
+    }
+    
+    /** @test */
+    public function it_throw_exception_if_provided_class_is_not_enum_class_when_trying_to_set_attribute()
+    {
+        $this->expectException(MustImplementsEnumInterfaceException::class);
+    
+        $refProp = new \ReflectionProperty(\get_class($this->postStub), 'enums');
+        $refProp->setAccessible(true);
+        $refProp->setValue($this->postStub, [
+            'status' => \stdClass::class
+        ]);
+    
+        $this->postStub->setAttribute('status', 'sadasd');
+    }
+    
 }
