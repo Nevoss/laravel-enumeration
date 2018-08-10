@@ -178,4 +178,14 @@ class EnumTest extends TestCase
         $this->assertInstanceOf(Collection::class, $keys);
         $this->assertArraySubset([ 'DRAFT', 'PENDING', 'PUBLISH', 'TWO_WORDS' ], $keys->values()->toArray());
     }
+    
+    /** @test */
+    public function it_can_create_enum_object_when_calling_the_const_name_as_method()
+    {
+        $this->assertInstanceOf(PostStatusEnumStub::class, $enum = PostStatusEnumStub::DRAFT());
+        $this->assertEquals(PostStatusEnumStub::DRAFT, $enum->getValue());
+
+        $this->assertInstanceOf(PostStatusEnumStub::class, $enum = PostStatusEnumStub::TWO_WORDS());
+        $this->assertEquals(PostStatusEnumStub::TWO_WORDS, $enum->getValue());
+    }
 }

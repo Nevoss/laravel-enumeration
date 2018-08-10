@@ -204,7 +204,11 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      */
     public static function __callStatic($methodName, $arguments)
     {
-        return static::create($methodName);
+        if (static::keys()->contains($methodName)) {
+            return static::create(\constant(static::class . '::' . $methodName));
+        }
+    
+        throw new \BadMethodCallException("Method `{$methodName}` not founded in class " . static::class);
     }
     
     /**
@@ -224,7 +228,7 @@ abstract class Enum implements EnumInterface, \JsonSerializable
             return $this->equals(\constant(static::class . '::' . $key));
         }
         
-        throw new \BadMethodCallException("Method `{$methodName}` not founded in class in class " . static::class);
+        throw new \BadMethodCallException("Method `{$methodName}` not founded in class " . static::class);
     }
     
     /**
