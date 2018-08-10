@@ -15,9 +15,8 @@ class PostStatusEnumStub extends Enum
      *
      * @var array
      */
-    public static $optionsLabels = [
+    public static $labels = [
         self::DRAFT => 'Draft Mode',
         self::PENDING => 'Pending Mode',
-        self::PUBLISH => 'Published',
     ];
 }

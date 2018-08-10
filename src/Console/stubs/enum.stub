@@ -14,7 +14,7 @@ class DummyClass extends Enum
      *
      * @var array
      */
-    public static $optionsLabels = [
+    public static $labels = [
         self::SOME_OPTION => 'Some option',
         self::ANOTHER_OPTION => 'Another option',
     ];

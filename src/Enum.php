@@ -2,7 +2,6 @@
 
 namespace Nevoss\Enumeration;
 
-use Illuminate\Support\Collection;
 use Nevoss\Enumeration\Contracts\EnumInterface;
 use Nevoss\Enumeration\Exceptions\InvalidPropertyException;
 use Nevoss\Enumeration\Exceptions\InvalidValueException;
@@ -10,18 +9,32 @@ use Nevoss\Enumeration\Exceptions\InvalidValueException;
 abstract class Enum implements EnumInterface, \JsonSerializable
 {
     /**
-     * hold all values in keys and the labels value
-     *
-     * @var array
-     */
-    public static $optionsLabels = [];
-    
-    /**
-     * Hold the current value of the enum
+     * current value of the enum
      *
      * @var mixed
      */
     protected $value;
+    
+    /**
+     * Store all the values labels
+     *
+     * @var array
+     */
+    protected static $labels = [];
+    
+    /**
+     * Store all cached labels after it calculate them first time
+     *
+     * @var array
+     */
+    protected static $cachedLabels = [];
+    
+    /**
+     * Store cached constant of the current object
+     *
+     * @var array
+     */
+    protected static $cachedValues = [];
     
     /**
      * Enum constructor.
@@ -31,6 +44,32 @@ abstract class Enum implements EnumInterface, \JsonSerializable
     public function __construct($value = null)
     {
         $this->setValue($value);
+    }
+    
+    /**
+     * check if the provide variable is equals to value of the enum
+     *
+     * @param $value
+     * @return bool
+     */
+    public function equals($value)
+    {
+        if ($value instanceof static) {
+            $value = $value->getValue();
+        }
+        
+        return $value === $this->getValue();
+    }
+    
+    /**
+     * same as equals
+     *
+     * @param $value
+     * @return bool
+     */
+    public function is($value)
+    {
+        return $this->equals($value);
     }
     
     /**
@@ -45,9 +84,9 @@ abstract class Enum implements EnumInterface, \JsonSerializable
         if ($value !== null && !static::isValid($value)) {
             throw InvalidValueException::create($value, static::class);
         }
-    
+        
         $this->value = $value;
-    
+        
         return $this;
     }
     
@@ -68,11 +107,123 @@ abstract class Enum implements EnumInterface, \JsonSerializable
      */
     public function getLabel()
     {
-        if ($this->value === null) {
-            return null;
+        return static::labels()->get($this->value, null);
+    }
+    
+    /**
+     * returns all the values of the current static enum class
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function values()
+    {
+        if (empty(static::$cachedValues)) {
+            $reflectionClass = new \ReflectionClass(static::class);
+            static::$cachedValues = $reflectionClass->getConstants();
         }
         
-        return static::$optionsLabels[$this->value];
+        return collect(static::$cachedValues);
+    }
+    
+    /**
+     * returns all the constants names
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function keys()
+    {
+        return static::values()->keys();
+    }
+    
+    /**
+     * returns all the labels of the enum
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function labels()
+    {
+        if (static::$cachedLabels) {
+            return collect(static::$cachedLabels);
+        }
+        
+        return static::values()->flip()->map(function ($value, $key) {
+            $label = array_key_exists($key, static::$labels) ?
+                static::$labels[$key] :
+                str_replace('_', ' ', ucfirst(strtolower($key)));
+            
+            return static::$cachedLabels[$key] = $label;
+        });
+    }
+    
+    /**
+     * returns all the values as an enum class
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function all()
+    {
+        return static::values()->map(function ($value) {
+            return new static($value);
+        });
+    }
+    
+    /**
+     * check if the value is a valid enum value
+     *
+     * @param $value
+     * @return bool
+     */
+    public static function isValid($value)
+    {
+        if ($value instanceof static) {
+            $value = $value->value;
+        }
+        
+        return static::values()->contains($value);
+    }
+    
+    /**
+     * create an instance of the enum class
+     *
+     * @param $value
+     * @return static
+     */
+    public static function create($value)
+    {
+        return new static($value);
+    }
+    
+    /**
+     * generate an instance of enum class base on the name of the method
+     * e.g: PostStatusEnum::DRAFT() when DRAFT is en enum value
+     *
+     * @param $methodName
+     * @param $arguments
+     * @return static
+     */
+    public static function __callStatic($methodName, $arguments)
+    {
+        return static::create($methodName);
+    }
+    
+    /**
+     * check and execute "is" methods, e.g: isDraft check if the current enum class
+     * is equals to DRAFT enum value
+     *
+     * @param $methodName
+     * @param $arguments
+     * @return bool
+     */
+    public function __call($methodName, $arguments)
+    {
+        if (
+            strpos($methodName, 'is') === 0 &&
+            static::keys()->contains($key = strtoupper(substr($methodName, 2)))
+        ) {
+            return $this->equals(\constant(static::class . '::' . $key));
+        }
+        
+        throw new \BadMethodCallException("Method `{$methodName}` not founded in class in class " . static::class);
     }
     
     /**
@@ -104,11 +255,11 @@ abstract class Enum implements EnumInterface, \JsonSerializable
     public function __set($key, $value)
     {
         $methodName = 'set' . ucfirst($key);
-    
+        
         if (!method_exists($this, $methodName)) {
             throw InvalidPropertyException::set($key, static::class);
         }
-    
+        
         return $this->{$methodName}($value);
     }
     
@@ -124,7 +275,7 @@ abstract class Enum implements EnumInterface, \JsonSerializable
     }
     
     /**
-     * cast the object on calling json_encode function
+     * cast the object when calling json_encode function on current enum class
      *
      * @return array
      */
@@ -134,34 +285,5 @@ abstract class Enum implements EnumInterface, \JsonSerializable
             'value' => $this->getValue(),
             'label' => $this->getLabel(),
         ];
-    }
-    
-    /**
-     * check if value is exists in the enum options
-     *
-     * @param $value
-     * @return bool
-     */
-    public static function isValid($value): bool
-    {
-        if (!array_key_exists($value, static::$optionsLabels)) {
-            return false;
-        }
-    
-        return true;
-    }
-    
-    /**
-     * returns collection of all the enum options
-     *
-     * @return Collection
-     */
-    public static function all(): Collection
-    {
-        return collect(static::$optionsLabels)
-            ->keys()
-            ->map(function ($value) {
-                return new static($value);
-            });
     }
 }
