@@ -219,7 +219,7 @@ abstract class Enum implements EnumInterface, \JsonSerializable
     {
         if (
             strpos($methodName, 'is') === 0 &&
-            static::keys()->contains($key = strtoupper(substr($methodName, 2)))
+            static::keys()->contains($key = strtoupper(snake_case(substr($methodName, 2))))
         ) {
             return $this->equals(\constant(static::class . '::' . $key));
         }

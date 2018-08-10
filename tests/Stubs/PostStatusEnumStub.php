@@ -9,6 +9,7 @@ class PostStatusEnumStub extends Enum
     public const DRAFT = 'draft';
     public const PENDING = 'pending';
     public const PUBLISH = '1';
+    public const TWO_WORDS = 2;
     
     /**
      * hold all values in keys and the labels value

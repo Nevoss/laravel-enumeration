@@ -107,7 +107,7 @@ class EnumTest extends TestCase
         $enums->each(function ($enum) {
             $this->assertInstanceOf(PostStatusEnumStub::class, $enum);
         });
-        $this->assertEquals(3, $enums->count());
+        $this->assertEquals(4, $enums->count());
     }
     
     /** @test */
@@ -139,6 +139,7 @@ class EnumTest extends TestCase
         
         $this->assertTrue($enum->isPublish());
         $this->assertFalse($enum->isDraft());
+        $this->assertFalse($enum->isTwoWords());
     }
     
     /** @test */
@@ -157,7 +158,7 @@ class EnumTest extends TestCase
         $this->assertInstanceOf(Collection::class, $labels);
         
         $this->assertArraySubset([ 'Draft Mode', 'Pending Mode', 'Publish' ], $labels->values()->toArray());
-        $this->assertArraySubset([ 'draft', 'pending', 1 ], $labels->keys()->toArray());
+        $this->assertArraySubset([ 'draft', 'pending', 1, 2 ], $labels->keys()->toArray());
     }
     
     /** @test */
@@ -166,7 +167,7 @@ class EnumTest extends TestCase
         $values = PostStatusEnumStub::values();
     
         $this->assertInstanceOf(Collection::class, $values);
-        $this->assertArraySubset([ 'draft', 'pending', '1' ], $values->toArray());
+        $this->assertArraySubset([ 'draft', 'pending', '1', 2 ], $values->values()->toArray());
     }
     
     /** @test */
@@ -175,6 +176,6 @@ class EnumTest extends TestCase
         $keys = PostStatusEnumStub::keys();
         
         $this->assertInstanceOf(Collection::class, $keys);
-        $this->assertArraySubset([ 'DRAFT', 'PENDING', 'PUBLISH' ], $keys->toArray());
+        $this->assertArraySubset([ 'DRAFT', 'PENDING', 'PUBLISH', 'TWO_WORDS' ], $keys->values()->toArray());
     }
 }
