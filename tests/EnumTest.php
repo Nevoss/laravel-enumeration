@@ -14,8 +14,8 @@ class EnumTest extends TestCase
     {
         $enum = new PostStatusEnumStub(PostStatusEnumStub::PUBLISH);
     
-        $this->assertEquals('publish', $enum->getValue());
-        $this->assertEquals('publish', $enum->value);
+        $this->assertEquals('1', $enum->getValue());
+        $this->assertEquals('1', $enum->value);
     }
     
     /** @test */
@@ -155,8 +155,9 @@ class EnumTest extends TestCase
         $labels = PostStatusEnumStub::labels();
     
         $this->assertInstanceOf(Collection::class, $labels);
+        
         $this->assertArraySubset([ 'Draft Mode', 'Pending Mode', 'Publish' ], $labels->values()->toArray());
-        $this->assertArraySubset([ 'draft', 'pending', 'publish' ], $labels->keys()->toArray());
+        $this->assertArraySubset([ 'draft', 'pending', 1 ], $labels->keys()->toArray());
     }
     
     /** @test */
@@ -165,7 +166,7 @@ class EnumTest extends TestCase
         $values = PostStatusEnumStub::values();
     
         $this->assertInstanceOf(Collection::class, $values);
-        $this->assertArraySubset([ 'draft', 'pending', 'publish' ], $values->toArray());
+        $this->assertArraySubset([ 'draft', 'pending', '1' ], $values->toArray());
     }
     
     /** @test */

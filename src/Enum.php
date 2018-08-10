@@ -147,9 +147,10 @@ abstract class Enum implements EnumInterface, \JsonSerializable
         }
         
         return static::values()->flip()->map(function ($value, $key) {
+            
             $label = array_key_exists($key, static::$labels) ?
                 static::$labels[$key] :
-                str_replace('_', ' ', ucfirst(strtolower($key)));
+                str_replace('_', ' ', ucfirst(strtolower($value)));
             
             return static::$cachedLabels[$key] = $label;
         });
