@@ -188,4 +188,22 @@ class EnumTest extends TestCase
         $this->assertInstanceOf(PostStatusEnumStub::class, $enum = PostStatusEnumStub::TWO_WORDS());
         $this->assertEquals(PostStatusEnumStub::TWO_WORDS, $enum->getValue());
     }
+    
+    /** @test */
+    public function it_throw_an_exception_if_you_call_static_method_and_there_is_not_const_name_with_that_method_name()
+    {
+        $this->expectException(\BadMethodCallException::class);
+        
+        PostStatusEnumStub::SOMTHING_WRONG();
+    }
+    
+    /** @test */
+    public function it_throw_an_exception_if_not_existed_method_is_called()
+    {
+        $this->expectException(\BadMethodCallException::class);
+        
+        $enum = PostStatusEnumStub::TWO_WORDS();
+        
+        $enum->isSomthingWrong();
+    }
 }
